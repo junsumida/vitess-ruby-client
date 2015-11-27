@@ -4,16 +4,16 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "vtrpc.CallerID" do
+  add_message "vitess.vtrpc.CallerID" do
     optional :principal, :string, 1
     optional :component, :string, 2
     optional :subcomponent, :string, 3
   end
-  add_message "vtrpc.RPCError" do
-    optional :code, :enum, 1, "vtrpc.ErrorCode"
+  add_message "vitess.vtrpc.RPCError" do
+    optional :code, :enum, 1, "vitess.vtrpc.ErrorCode"
     optional :message, :string, 2
   end
-  add_enum "vtrpc.ErrorCode" do
+  add_enum "vitess.vtrpc.ErrorCode" do
     value :SUCCESS, 0
     value :CANCELLED, 1
     value :UNKNOWN_ERROR, 2
@@ -30,8 +30,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module Vtrpc
-  CallerID = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtrpc.CallerID").msgclass
-  RPCError = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtrpc.RPCError").msgclass
-  ErrorCode = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtrpc.ErrorCode").enummodule
+module Vitess
+  module Vtrpc
+    CallerID = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtrpc.CallerID").msgclass
+    RPCError = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtrpc.RPCError").msgclass
+    ErrorCode = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtrpc.ErrorCode").enummodule
+  end
 end

@@ -4,18 +4,18 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "logutil.Time" do
+  add_message "vitess.logutil.Time" do
     optional :seconds, :int64, 1
     optional :nanoseconds, :int32, 2
   end
-  add_message "logutil.Event" do
-    optional :time, :message, 1, "logutil.Time"
-    optional :level, :enum, 2, "logutil.Level"
+  add_message "vitess.logutil.Event" do
+    optional :time, :message, 1, "vitess.logutil.Time"
+    optional :level, :enum, 2, "vitess.logutil.Level"
     optional :file, :string, 3
     optional :line, :int64, 4
     optional :value, :string, 5
   end
-  add_enum "logutil.Level" do
+  add_enum "vitess.logutil.Level" do
     value :INFO, 0
     value :WARNING, 1
     value :ERROR, 2
@@ -23,8 +23,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module Logutil
-  Time = Google::Protobuf::DescriptorPool.generated_pool.lookup("logutil.Time").msgclass
-  Event = Google::Protobuf::DescriptorPool.generated_pool.lookup("logutil.Event").msgclass
-  Level = Google::Protobuf::DescriptorPool.generated_pool.lookup("logutil.Level").enummodule
+module Vitess
+  module Logutil
+    Time = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.logutil.Time").msgclass
+    Event = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.logutil.Event").msgclass
+    Level = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.logutil.Level").enummodule
+  end
 end

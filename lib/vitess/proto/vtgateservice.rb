@@ -7,5 +7,7 @@ require 'vtgate'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Vtgateservice
+module Vitess
+  module Vtgateservice
+  end
 end

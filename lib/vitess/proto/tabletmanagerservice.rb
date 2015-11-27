@@ -7,5 +7,7 @@ require 'tabletmanagerdata'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Tabletmanagerservice
+module Vitess
+  module Tabletmanagerservice
+  end
 end

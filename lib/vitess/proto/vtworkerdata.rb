@@ -5,15 +5,17 @@ require 'google/protobuf'
 
 require 'logutil'
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "vtworkerdata.ExecuteVtworkerCommandRequest" do
+  add_message "vitess.vtworkerdata.ExecuteVtworkerCommandRequest" do
     repeated :args, :string, 1
   end
-  add_message "vtworkerdata.ExecuteVtworkerCommandResponse" do
-    optional :event, :message, 1, "logutil.Event"
+  add_message "vitess.vtworkerdata.ExecuteVtworkerCommandResponse" do
+    optional :event, :message, 1, "vitess.logutil.Event"
   end
 end
 
-module Vtworkerdata
-  ExecuteVtworkerCommandRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtworkerdata.ExecuteVtworkerCommandRequest").msgclass
-  ExecuteVtworkerCommandResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtworkerdata.ExecuteVtworkerCommandResponse").msgclass
+module Vitess
+  module Vtworkerdata
+    ExecuteVtworkerCommandRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtworkerdata.ExecuteVtworkerCommandRequest").msgclass
+    ExecuteVtworkerCommandResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtworkerdata.ExecuteVtworkerCommandResponse").msgclass
+  end
 end

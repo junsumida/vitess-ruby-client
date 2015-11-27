@@ -7,5 +7,7 @@ require 'vtctldata'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Vtctlservice
+module Vitess
+  module Vtctlservice
+  end
 end

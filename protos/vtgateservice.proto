@@ -5,7 +5,7 @@ syntax = "proto3";
 
 option java_package="com.youtube.vitess.proto.grpc";
 
-package vtgateservice;
+package vitess.vtgateservice;
 
 import "vtgate.proto";
 

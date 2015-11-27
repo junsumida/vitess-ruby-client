@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vtctldata;
+package vitess.vtctldata;
 
 import "logutil.proto";
 

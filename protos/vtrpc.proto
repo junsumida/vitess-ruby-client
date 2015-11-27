@@ -4,7 +4,7 @@ syntax = "proto3";
 
 option java_package="com.youtube.vitess.proto";
 
-package vtrpc;
+package vitess.vtrpc;
 
 // CallerID is passed along RPCs to identify the originating client
 // for a request. It is not meant to be secure, but only

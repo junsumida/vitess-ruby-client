@@ -4,50 +4,50 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "automation.ClusterOperation" do
+  add_message "vitess.automation.ClusterOperation" do
     optional :id, :string, 1
-    repeated :serial_tasks, :message, 2, "automation.TaskContainer"
-    optional :state, :enum, 3, "automation.ClusterOperationState"
+    repeated :serial_tasks, :message, 2, "vitess.automation.TaskContainer"
+    optional :state, :enum, 3, "vitess.automation.ClusterOperationState"
     optional :error, :string, 4
   end
-  add_message "automation.TaskContainer" do
-    repeated :parallel_tasks, :message, 1, "automation.Task"
+  add_message "vitess.automation.TaskContainer" do
+    repeated :parallel_tasks, :message, 1, "vitess.automation.Task"
     optional :concurrency, :int32, 2
   end
-  add_message "automation.Task" do
+  add_message "vitess.automation.Task" do
     optional :name, :string, 1
     map :parameters, :string, :string, 2
     optional :id, :string, 3
-    optional :state, :enum, 4, "automation.TaskState"
+    optional :state, :enum, 4, "vitess.automation.TaskState"
     optional :output, :string, 5
     optional :error, :string, 6
   end
-  add_message "automation.EnqueueClusterOperationRequest" do
+  add_message "vitess.automation.EnqueueClusterOperationRequest" do
     optional :name, :string, 1
     map :parameters, :string, :string, 2
   end
-  add_message "automation.EnqueueClusterOperationResponse" do
+  add_message "vitess.automation.EnqueueClusterOperationResponse" do
     optional :id, :string, 1
   end
-  add_message "automation.GetClusterOperationStateRequest" do
+  add_message "vitess.automation.GetClusterOperationStateRequest" do
     optional :id, :string, 1
   end
-  add_message "automation.GetClusterOperationStateResponse" do
-    optional :state, :enum, 1, "automation.ClusterOperationState"
+  add_message "vitess.automation.GetClusterOperationStateResponse" do
+    optional :state, :enum, 1, "vitess.automation.ClusterOperationState"
   end
-  add_message "automation.GetClusterOperationDetailsRequest" do
+  add_message "vitess.automation.GetClusterOperationDetailsRequest" do
     optional :id, :string, 1
   end
-  add_message "automation.GetClusterOperationDetailsResponse" do
-    optional :cluster_op, :message, 2, "automation.ClusterOperation"
+  add_message "vitess.automation.GetClusterOperationDetailsResponse" do
+    optional :cluster_op, :message, 2, "vitess.automation.ClusterOperation"
   end
-  add_enum "automation.ClusterOperationState" do
+  add_enum "vitess.automation.ClusterOperationState" do
     value :UNKNOWN_CLUSTER_OPERATION_STATE, 0
     value :CLUSTER_OPERATION_NOT_STARTED, 1
     value :CLUSTER_OPERATION_RUNNING, 2
     value :CLUSTER_OPERATION_DONE, 3
   end
-  add_enum "automation.TaskState" do
+  add_enum "vitess.automation.TaskState" do
     value :UNKNOWN_TASK_STATE, 0
     value :NOT_STARTED, 1
     value :RUNNING, 2
@@ -55,16 +55,18 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module Automation
-  ClusterOperation = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.ClusterOperation").msgclass
-  TaskContainer = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.TaskContainer").msgclass
-  Task = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.Task").msgclass
-  EnqueueClusterOperationRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.EnqueueClusterOperationRequest").msgclass
-  EnqueueClusterOperationResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.EnqueueClusterOperationResponse").msgclass
-  GetClusterOperationStateRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.GetClusterOperationStateRequest").msgclass
-  GetClusterOperationStateResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.GetClusterOperationStateResponse").msgclass
-  GetClusterOperationDetailsRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.GetClusterOperationDetailsRequest").msgclass
-  GetClusterOperationDetailsResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.GetClusterOperationDetailsResponse").msgclass
-  ClusterOperationState = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.ClusterOperationState").enummodule
-  TaskState = Google::Protobuf::DescriptorPool.generated_pool.lookup("automation.TaskState").enummodule
+module Vitess
+  module Automation
+    ClusterOperation = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.ClusterOperation").msgclass
+    TaskContainer = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.TaskContainer").msgclass
+    Task = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.Task").msgclass
+    EnqueueClusterOperationRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.EnqueueClusterOperationRequest").msgclass
+    EnqueueClusterOperationResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.EnqueueClusterOperationResponse").msgclass
+    GetClusterOperationStateRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.GetClusterOperationStateRequest").msgclass
+    GetClusterOperationStateResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.GetClusterOperationStateResponse").msgclass
+    GetClusterOperationDetailsRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.GetClusterOperationDetailsRequest").msgclass
+    GetClusterOperationDetailsResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.GetClusterOperationDetailsResponse").msgclass
+    ClusterOperationState = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.ClusterOperationState").enummodule
+    TaskState = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.automation.TaskState").enummodule
+  end
 end

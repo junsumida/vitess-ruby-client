@@ -7,5 +7,7 @@ require 'query'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Queryservice
+module Vitess
+  module Queryservice
+  end
 end

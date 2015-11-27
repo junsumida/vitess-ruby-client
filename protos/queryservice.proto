@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package queryservice;
+package vitess.queryservice;
 
 import "query.proto";
 

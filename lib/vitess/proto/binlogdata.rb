@@ -6,22 +6,22 @@ require 'google/protobuf'
 require 'query'
 require 'topodata'
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "binlogdata.Charset" do
+  add_message "vitess.binlogdata.Charset" do
     optional :client, :int32, 1
     optional :conn, :int32, 2
     optional :server, :int32, 3
   end
-  add_message "binlogdata.BinlogTransaction" do
-    repeated :statements, :message, 1, "binlogdata.BinlogTransaction.Statement"
+  add_message "vitess.binlogdata.BinlogTransaction" do
+    repeated :statements, :message, 1, "vitess.binlogdata.BinlogTransaction.Statement"
     optional :timestamp, :int64, 2
     optional :transaction_id, :string, 3
   end
-  add_message "binlogdata.BinlogTransaction.Statement" do
-    optional :category, :enum, 1, "binlogdata.BinlogTransaction.Statement.Category"
-    optional :charset, :message, 2, "binlogdata.Charset"
+  add_message "vitess.binlogdata.BinlogTransaction.Statement" do
+    optional :category, :enum, 1, "vitess.binlogdata.BinlogTransaction.Statement.Category"
+    optional :charset, :message, 2, "vitess.binlogdata.Charset"
     optional :sql, :string, 3
   end
-  add_enum "binlogdata.BinlogTransaction.Statement.Category" do
+  add_enum "vitess.binlogdata.BinlogTransaction.Statement.Category" do
     value :BL_UNRECOGNIZED, 0
     value :BL_BEGIN, 1
     value :BL_COMMIT, 2
@@ -30,57 +30,59 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     value :BL_DDL, 5
     value :BL_SET, 6
   end
-  add_message "binlogdata.StreamEvent" do
-    optional :category, :enum, 1, "binlogdata.StreamEvent.Category"
+  add_message "vitess.binlogdata.StreamEvent" do
+    optional :category, :enum, 1, "vitess.binlogdata.StreamEvent.Category"
     optional :table_name, :string, 2
-    repeated :primary_key_fields, :message, 3, "query.Field"
-    repeated :primary_key_values, :message, 4, "query.Row"
+    repeated :primary_key_fields, :message, 3, "vitess.query.Field"
+    repeated :primary_key_values, :message, 4, "vitess.query.Row"
     optional :sql, :string, 5
     optional :timestamp, :int64, 6
     optional :transaction_id, :string, 7
   end
-  add_enum "binlogdata.StreamEvent.Category" do
+  add_enum "vitess.binlogdata.StreamEvent.Category" do
     value :SE_ERR, 0
     value :SE_DML, 1
     value :SE_DDL, 2
     value :SE_POS, 3
   end
-  add_message "binlogdata.StreamUpdateRequest" do
+  add_message "vitess.binlogdata.StreamUpdateRequest" do
     optional :position, :string, 1
   end
-  add_message "binlogdata.StreamUpdateResponse" do
-    optional :stream_event, :message, 1, "binlogdata.StreamEvent"
+  add_message "vitess.binlogdata.StreamUpdateResponse" do
+    optional :stream_event, :message, 1, "vitess.binlogdata.StreamEvent"
   end
-  add_message "binlogdata.StreamKeyRangeRequest" do
+  add_message "vitess.binlogdata.StreamKeyRangeRequest" do
     optional :position, :string, 1
-    optional :keyspace_id_type, :enum, 2, "topodata.KeyspaceIdType"
-    optional :key_range, :message, 3, "topodata.KeyRange"
-    optional :charset, :message, 4, "binlogdata.Charset"
+    optional :keyspace_id_type, :enum, 2, "vitess.topodata.KeyspaceIdType"
+    optional :key_range, :message, 3, "vitess.topodata.KeyRange"
+    optional :charset, :message, 4, "vitess.binlogdata.Charset"
   end
-  add_message "binlogdata.StreamKeyRangeResponse" do
-    optional :binlog_transaction, :message, 1, "binlogdata.BinlogTransaction"
+  add_message "vitess.binlogdata.StreamKeyRangeResponse" do
+    optional :binlog_transaction, :message, 1, "vitess.binlogdata.BinlogTransaction"
   end
-  add_message "binlogdata.StreamTablesRequest" do
+  add_message "vitess.binlogdata.StreamTablesRequest" do
     optional :position, :string, 1
     repeated :tables, :string, 2
-    optional :charset, :message, 3, "binlogdata.Charset"
+    optional :charset, :message, 3, "vitess.binlogdata.Charset"
   end
-  add_message "binlogdata.StreamTablesResponse" do
-    optional :binlog_transaction, :message, 1, "binlogdata.BinlogTransaction"
+  add_message "vitess.binlogdata.StreamTablesResponse" do
+    optional :binlog_transaction, :message, 1, "vitess.binlogdata.BinlogTransaction"
   end
 end
 
-module Binlogdata
-  Charset = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.Charset").msgclass
-  BinlogTransaction = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.BinlogTransaction").msgclass
-  BinlogTransaction::Statement = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.BinlogTransaction.Statement").msgclass
-  BinlogTransaction::Statement::Category = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.BinlogTransaction.Statement.Category").enummodule
-  StreamEvent = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamEvent").msgclass
-  StreamEvent::Category = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamEvent.Category").enummodule
-  StreamUpdateRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamUpdateRequest").msgclass
-  StreamUpdateResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamUpdateResponse").msgclass
-  StreamKeyRangeRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamKeyRangeRequest").msgclass
-  StreamKeyRangeResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamKeyRangeResponse").msgclass
-  StreamTablesRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamTablesRequest").msgclass
-  StreamTablesResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("binlogdata.StreamTablesResponse").msgclass
+module Vitess
+  module Binlogdata
+    Charset = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.Charset").msgclass
+    BinlogTransaction = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.BinlogTransaction").msgclass
+    BinlogTransaction::Statement = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.BinlogTransaction.Statement").msgclass
+    BinlogTransaction::Statement::Category = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.BinlogTransaction.Statement.Category").enummodule
+    StreamEvent = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamEvent").msgclass
+    StreamEvent::Category = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamEvent.Category").enummodule
+    StreamUpdateRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamUpdateRequest").msgclass
+    StreamUpdateResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamUpdateResponse").msgclass
+    StreamKeyRangeRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamKeyRangeRequest").msgclass
+    StreamKeyRangeResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamKeyRangeResponse").msgclass
+    StreamTablesRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamTablesRequest").msgclass
+    StreamTablesResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.binlogdata.StreamTablesResponse").msgclass
+  end
 end

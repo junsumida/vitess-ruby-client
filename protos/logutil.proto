@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package logutil;
+package vitess.logutil;
 
 // Time represents a time stamp in nanoseconds. In go, use logutil library
 // to convert times.

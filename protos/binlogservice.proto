@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package binlogservice;
+package vitess.binlogservice;
 
 import "binlogdata.proto";
 

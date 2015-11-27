@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package automationservice;
+package vitess.automationservice;
 
 import "automation.proto";
 

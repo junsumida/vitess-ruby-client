@@ -4,26 +4,28 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "mysqlctl.StartRequest" do
+  add_message "vitess.mysqlctl.StartRequest" do
   end
-  add_message "mysqlctl.StartResponse" do
+  add_message "vitess.mysqlctl.StartResponse" do
   end
-  add_message "mysqlctl.ShutdownRequest" do
+  add_message "vitess.mysqlctl.ShutdownRequest" do
     optional :wait_for_mysqld, :bool, 1
   end
-  add_message "mysqlctl.ShutdownResponse" do
+  add_message "vitess.mysqlctl.ShutdownResponse" do
   end
-  add_message "mysqlctl.RunMysqlUpgradeRequest" do
+  add_message "vitess.mysqlctl.RunMysqlUpgradeRequest" do
   end
-  add_message "mysqlctl.RunMysqlUpgradeResponse" do
+  add_message "vitess.mysqlctl.RunMysqlUpgradeResponse" do
   end
 end
 
-module Mysqlctl
-  StartRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.StartRequest").msgclass
-  StartResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.StartResponse").msgclass
-  ShutdownRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.ShutdownRequest").msgclass
-  ShutdownResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.ShutdownResponse").msgclass
-  RunMysqlUpgradeRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.RunMysqlUpgradeRequest").msgclass
-  RunMysqlUpgradeResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("mysqlctl.RunMysqlUpgradeResponse").msgclass
+module Vitess
+  module Mysqlctl
+    StartRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.StartRequest").msgclass
+    StartResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.StartResponse").msgclass
+    ShutdownRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.ShutdownRequest").msgclass
+    ShutdownResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.ShutdownResponse").msgclass
+    RunMysqlUpgradeRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.RunMysqlUpgradeRequest").msgclass
+    RunMysqlUpgradeResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.mysqlctl.RunMysqlUpgradeResponse").msgclass
+  end
 end

@@ -7,5 +7,7 @@ require 'vtworkerdata'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Vtworkerservice
+module Vitess
+  module Vtworkerservice
+  end
 end

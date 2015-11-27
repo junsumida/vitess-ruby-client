@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package vtworkerdata;
+package vitess.vtworkerdata;
 
 import "logutil.proto";
 

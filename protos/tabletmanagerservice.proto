@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package tabletmanagerservice;
+package vitess.tabletmanagerservice;
 
 import "tabletmanagerdata.proto";
 
