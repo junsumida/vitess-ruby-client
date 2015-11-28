@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vitess.tabletmanagerdata;
+package tabletmanagerdata;
 
 import "query.proto";
 import "topodata.proto";

@@ -6,142 +6,142 @@ require 'google/protobuf'
 require 'topodata'
 require 'vtrpc'
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "vitess.query.Target" do
+  add_message "query.Target" do
     optional :keyspace, :string, 1
     optional :shard, :string, 2
-    optional :tablet_type, :enum, 3, "vitess.topodata.TabletType"
+    optional :tablet_type, :enum, 3, "topodata.TabletType"
   end
-  add_message "vitess.query.VTGateCallerID" do
+  add_message "query.VTGateCallerID" do
     optional :username, :string, 1
   end
-  add_message "vitess.query.Value" do
-    optional :type, :enum, 1, "vitess.query.Type"
+  add_message "query.Value" do
+    optional :type, :enum, 1, "query.Type"
     optional :value, :bytes, 2
   end
-  add_message "vitess.query.BindVariable" do
-    optional :type, :enum, 1, "vitess.query.Type"
+  add_message "query.BindVariable" do
+    optional :type, :enum, 1, "query.Type"
     optional :value, :bytes, 2
-    repeated :values, :message, 3, "vitess.query.Value"
+    repeated :values, :message, 3, "query.Value"
   end
-  add_message "vitess.query.BoundQuery" do
+  add_message "query.BoundQuery" do
     optional :sql, :string, 1
-    map :bind_variables, :string, :message, 2, "vitess.query.BindVariable"
+    map :bind_variables, :string, :message, 2, "query.BindVariable"
   end
-  add_message "vitess.query.Field" do
+  add_message "query.Field" do
     optional :name, :string, 1
-    optional :type, :enum, 2, "vitess.query.Type"
+    optional :type, :enum, 2, "query.Type"
   end
-  add_message "vitess.query.Row" do
+  add_message "query.Row" do
     repeated :lengths, :sint64, 1
     optional :values, :bytes, 2
   end
-  add_message "vitess.query.QueryResult" do
-    repeated :fields, :message, 1, "vitess.query.Field"
+  add_message "query.QueryResult" do
+    repeated :fields, :message, 1, "query.Field"
     optional :rows_affected, :uint64, 2
     optional :insert_id, :uint64, 3
-    repeated :rows, :message, 4, "vitess.query.Row"
+    repeated :rows, :message, 4, "query.Row"
   end
-  add_message "vitess.query.GetSessionIdRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
+  add_message "query.GetSessionIdRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
     optional :keyspace, :string, 3
     optional :shard, :string, 4
   end
-  add_message "vitess.query.GetSessionIdResponse" do
+  add_message "query.GetSessionIdResponse" do
     optional :session_id, :int64, 1
   end
-  add_message "vitess.query.ExecuteRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
-    optional :query, :message, 4, "vitess.query.BoundQuery"
+  add_message "query.ExecuteRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
+    optional :query, :message, 4, "query.BoundQuery"
     optional :transaction_id, :int64, 5
     optional :session_id, :int64, 6
   end
-  add_message "vitess.query.ExecuteResponse" do
-    optional :result, :message, 1, "vitess.query.QueryResult"
+  add_message "query.ExecuteResponse" do
+    optional :result, :message, 1, "query.QueryResult"
   end
-  add_message "vitess.query.ExecuteBatchRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
-    repeated :queries, :message, 4, "vitess.query.BoundQuery"
+  add_message "query.ExecuteBatchRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
+    repeated :queries, :message, 4, "query.BoundQuery"
     optional :as_transaction, :bool, 5
     optional :transaction_id, :int64, 6
     optional :session_id, :int64, 7
   end
-  add_message "vitess.query.ExecuteBatchResponse" do
-    repeated :results, :message, 1, "vitess.query.QueryResult"
+  add_message "query.ExecuteBatchResponse" do
+    repeated :results, :message, 1, "query.QueryResult"
   end
-  add_message "vitess.query.StreamExecuteRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
-    optional :query, :message, 4, "vitess.query.BoundQuery"
+  add_message "query.StreamExecuteRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
+    optional :query, :message, 4, "query.BoundQuery"
     optional :session_id, :int64, 5
   end
-  add_message "vitess.query.StreamExecuteResponse" do
-    optional :result, :message, 1, "vitess.query.QueryResult"
+  add_message "query.StreamExecuteResponse" do
+    optional :result, :message, 1, "query.QueryResult"
   end
-  add_message "vitess.query.BeginRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
+  add_message "query.BeginRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
     optional :session_id, :int64, 4
   end
-  add_message "vitess.query.BeginResponse" do
+  add_message "query.BeginResponse" do
     optional :transaction_id, :int64, 1
   end
-  add_message "vitess.query.CommitRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
+  add_message "query.CommitRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
     optional :transaction_id, :int64, 4
     optional :session_id, :int64, 5
   end
-  add_message "vitess.query.CommitResponse" do
+  add_message "query.CommitResponse" do
   end
-  add_message "vitess.query.RollbackRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
+  add_message "query.RollbackRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
     optional :transaction_id, :int64, 4
     optional :session_id, :int64, 5
   end
-  add_message "vitess.query.RollbackResponse" do
+  add_message "query.RollbackResponse" do
   end
-  add_message "vitess.query.SplitQueryRequest" do
-    optional :effective_caller_id, :message, 1, "vitess.vtrpc.CallerID"
-    optional :immediate_caller_id, :message, 2, "vitess.query.VTGateCallerID"
-    optional :target, :message, 3, "vitess.query.Target"
-    optional :query, :message, 4, "vitess.query.BoundQuery"
+  add_message "query.SplitQueryRequest" do
+    optional :effective_caller_id, :message, 1, "vtrpc.CallerID"
+    optional :immediate_caller_id, :message, 2, "query.VTGateCallerID"
+    optional :target, :message, 3, "query.Target"
+    optional :query, :message, 4, "query.BoundQuery"
     optional :split_column, :string, 5
     optional :split_count, :int64, 6
     optional :session_id, :int64, 7
   end
-  add_message "vitess.query.QuerySplit" do
-    optional :query, :message, 1, "vitess.query.BoundQuery"
+  add_message "query.QuerySplit" do
+    optional :query, :message, 1, "query.BoundQuery"
     optional :row_count, :int64, 2
   end
-  add_message "vitess.query.SplitQueryResponse" do
-    repeated :queries, :message, 1, "vitess.query.QuerySplit"
+  add_message "query.SplitQueryResponse" do
+    repeated :queries, :message, 1, "query.QuerySplit"
   end
-  add_message "vitess.query.StreamHealthRequest" do
+  add_message "query.StreamHealthRequest" do
   end
-  add_message "vitess.query.RealtimeStats" do
+  add_message "query.RealtimeStats" do
     optional :health_error, :string, 1
     optional :seconds_behind_master, :uint32, 2
     optional :binlog_players_count, :int32, 3
     optional :seconds_behind_master_filtered_replication, :int64, 4
     optional :cpu_usage, :double, 5
   end
-  add_message "vitess.query.StreamHealthResponse" do
-    optional :target, :message, 1, "vitess.query.Target"
+  add_message "query.StreamHealthResponse" do
+    optional :target, :message, 1, "query.Target"
     optional :serving, :bool, 2
     optional :tablet_externally_reparented_timestamp, :int64, 3
-    optional :realtime_stats, :message, 4, "vitess.query.RealtimeStats"
+    optional :realtime_stats, :message, 4, "query.RealtimeStats"
   end
-  add_enum "vitess.query.Flag" do
+  add_enum "query.Flag" do
     value :NONE, 0
     value :ISINTEGRAL, 256
     value :ISUNSIGNED, 512
@@ -150,7 +150,7 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
     value :ISTEXT, 4096
     value :ISBINARY, 8192
   end
-  add_enum "vitess.query.Type" do
+  add_enum "query.Type" do
     value :NULL_TYPE, 0
     value :INT8, 257
     value :UINT8, 770
@@ -183,37 +183,35 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module Vitess
-  module Query
-    Target = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Target").msgclass
-    VTGateCallerID = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.VTGateCallerID").msgclass
-    Value = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Value").msgclass
-    BindVariable = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.BindVariable").msgclass
-    BoundQuery = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.BoundQuery").msgclass
-    Field = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Field").msgclass
-    Row = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Row").msgclass
-    QueryResult = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.QueryResult").msgclass
-    GetSessionIdRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.GetSessionIdRequest").msgclass
-    GetSessionIdResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.GetSessionIdResponse").msgclass
-    ExecuteRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.ExecuteRequest").msgclass
-    ExecuteResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.ExecuteResponse").msgclass
-    ExecuteBatchRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.ExecuteBatchRequest").msgclass
-    ExecuteBatchResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.ExecuteBatchResponse").msgclass
-    StreamExecuteRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.StreamExecuteRequest").msgclass
-    StreamExecuteResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.StreamExecuteResponse").msgclass
-    BeginRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.BeginRequest").msgclass
-    BeginResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.BeginResponse").msgclass
-    CommitRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.CommitRequest").msgclass
-    CommitResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.CommitResponse").msgclass
-    RollbackRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.RollbackRequest").msgclass
-    RollbackResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.RollbackResponse").msgclass
-    SplitQueryRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.SplitQueryRequest").msgclass
-    QuerySplit = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.QuerySplit").msgclass
-    SplitQueryResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.SplitQueryResponse").msgclass
-    StreamHealthRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.StreamHealthRequest").msgclass
-    RealtimeStats = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.RealtimeStats").msgclass
-    StreamHealthResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.StreamHealthResponse").msgclass
-    Flag = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Flag").enummodule
-    Type = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.query.Type").enummodule
-  end
+module Query
+  Target = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Target").msgclass
+  VTGateCallerID = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.VTGateCallerID").msgclass
+  Value = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Value").msgclass
+  BindVariable = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.BindVariable").msgclass
+  BoundQuery = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.BoundQuery").msgclass
+  Field = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Field").msgclass
+  Row = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Row").msgclass
+  QueryResult = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.QueryResult").msgclass
+  GetSessionIdRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.GetSessionIdRequest").msgclass
+  GetSessionIdResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.GetSessionIdResponse").msgclass
+  ExecuteRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.ExecuteRequest").msgclass
+  ExecuteResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.ExecuteResponse").msgclass
+  ExecuteBatchRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.ExecuteBatchRequest").msgclass
+  ExecuteBatchResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.ExecuteBatchResponse").msgclass
+  StreamExecuteRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.StreamExecuteRequest").msgclass
+  StreamExecuteResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.StreamExecuteResponse").msgclass
+  BeginRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.BeginRequest").msgclass
+  BeginResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.BeginResponse").msgclass
+  CommitRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.CommitRequest").msgclass
+  CommitResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.CommitResponse").msgclass
+  RollbackRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.RollbackRequest").msgclass
+  RollbackResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.RollbackResponse").msgclass
+  SplitQueryRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.SplitQueryRequest").msgclass
+  QuerySplit = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.QuerySplit").msgclass
+  SplitQueryResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.SplitQueryResponse").msgclass
+  StreamHealthRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.StreamHealthRequest").msgclass
+  RealtimeStats = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.RealtimeStats").msgclass
+  StreamHealthResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.StreamHealthResponse").msgclass
+  Flag = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Flag").enummodule
+  Type = Google::Protobuf::DescriptorPool.generated_pool.lookup("query.Type").enummodule
 end

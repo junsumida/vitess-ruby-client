@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vitess.mysqlctl;
+package mysqlctl;
 
 message StartRequest{}
 

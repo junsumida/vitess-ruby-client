@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package vitess.tableacl;
+package tableacl;
 
 // TableGroupSpec defines ACLs for a group of tables.
 message TableGroupSpec {

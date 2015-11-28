@@ -2,7 +2,7 @@
 
 syntax = "proto3";
 
-package vitess.vtgate;
+package vtgate;
 
 option java_package="com.youtube.vitess.proto";
 

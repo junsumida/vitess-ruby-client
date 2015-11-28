@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vitess.query;
+package query;
 
 option java_package="com.youtube.vitess.proto";
 

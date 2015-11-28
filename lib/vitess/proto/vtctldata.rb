@@ -5,18 +5,16 @@ require 'google/protobuf'
 
 require 'logutil'
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "vitess.vtctldata.ExecuteVtctlCommandRequest" do
+  add_message "vtctldata.ExecuteVtctlCommandRequest" do
     repeated :args, :string, 1
     optional :action_timeout, :int64, 2
   end
-  add_message "vitess.vtctldata.ExecuteVtctlCommandResponse" do
-    optional :event, :message, 1, "vitess.logutil.Event"
+  add_message "vtctldata.ExecuteVtctlCommandResponse" do
+    optional :event, :message, 1, "logutil.Event"
   end
 end
 
-module Vitess
-  module Vtctldata
-    ExecuteVtctlCommandRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtctldata.ExecuteVtctlCommandRequest").msgclass
-    ExecuteVtctlCommandResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.vtctldata.ExecuteVtctlCommandResponse").msgclass
-  end
+module Vtctldata
+  ExecuteVtctlCommandRequest = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtctldata.ExecuteVtctlCommandRequest").msgclass
+  ExecuteVtctlCommandResponse = Google::Protobuf::DescriptorPool.generated_pool.lookup("vtctldata.ExecuteVtctlCommandResponse").msgclass
 end

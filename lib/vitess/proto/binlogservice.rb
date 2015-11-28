@@ -7,7 +7,5 @@ require 'binlogdata'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Vitess
-  module Binlogservice
-  end
+module Binlogservice
 end

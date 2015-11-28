@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vitess.binlogdata;
+package binlogdata;
 
 import "query.proto";
 import "topodata.proto";

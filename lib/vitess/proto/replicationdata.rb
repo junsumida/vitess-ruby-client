@@ -4,7 +4,7 @@
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
-  add_message "vitess.replicationdata.Status" do
+  add_message "replicationdata.Status" do
     optional :position, :string, 1
     optional :slave_io_running, :bool, 2
     optional :slave_sql_running, :bool, 3
@@ -15,8 +15,6 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
-module Vitess
-  module Replicationdata
-    Status = Google::Protobuf::DescriptorPool.generated_pool.lookup("vitess.replicationdata.Status").msgclass
-  end
+module Replicationdata
+  Status = Google::Protobuf::DescriptorPool.generated_pool.lookup("replicationdata.Status").msgclass
 end

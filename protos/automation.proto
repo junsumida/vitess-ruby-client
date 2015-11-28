@@ -5,7 +5,7 @@
 
 syntax = "proto3";
 
-package vitess.automation;
+package automation;
 
 enum ClusterOperationState {
   UNKNOWN_CLUSTER_OPERATION_STATE = 0;

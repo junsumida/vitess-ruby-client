@@ -7,7 +7,5 @@ require 'automation'
 Google::Protobuf::DescriptorPool.generated_pool.build do
 end
 
-module Vitess
-  module Automationservice
-  end
+module Automationservice
 end

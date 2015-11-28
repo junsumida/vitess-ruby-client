@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-package vitess.vtctlservice;
+package vtctlservice;
 
 import "vtctldata.proto";
 
