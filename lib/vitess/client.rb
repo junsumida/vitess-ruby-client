@@ -1,14 +1,19 @@
-this_dir = File.expand_path(File.dirname(__FILE__))
-lib_dir = File.join(this_dir, 'lib')
-$LOAD_PATH.unshift(lib_dir) unless $LOAD_PATH.include?(lib_dir)
+current_dir = File.expand_path(File.dirname(__FILE__))
+proto_dir   = File.join(current_dir + '/lib/vitessproto')
+$LOAD_PATH.unshift(current_dir)
+$LOAD_PATH.unshift(proto_dir)
 
-require 'grpc'
-require_relative 'client/version'
-require_relative 'proto/vtgateservice_services'
-require_relative 'proto/vtrpc'
+require 'google/protobuf'
+
+require 'proto/query'
+require 'proto/vtgate'
+require 'proto/vtgateservice'
 
 # Util
 require 'socket'
+
+# debug
+require 'pry-byebug'
 
 module Vitess
   class Util
@@ -16,7 +21,7 @@ module Vitess
 
     class << self
       def process_id
-        Proc.id
+        Process.pid
       end
 
       def local_ip_address
@@ -30,7 +35,7 @@ module Vitess
       attr_accessor :host
 
       def host
-        'localhost:50051'
+      'localhost:15999'
       end
 
       def connect
@@ -40,32 +45,30 @@ module Vitess
       def end
       end
 
-      def session
-        connect.session
-      end
-
       def query(sql, options = {})
-        vtgateservice.execute(Vtgateservice::Request.new({caller_id: caller_id(:query), session: session, query: bound_query(sql)}))
+        session = Vtgate::Session.new
+        vtgateservice.execute(Vtgate::ExecuteRequest.new({caller_id: caller_id(:query), session: session, query: bound_query(sql)}))
       end
 
       private
 
       def bound_query(sql)
-        Vtgateservice::BoundQuery.new(sql: sql,bind_variables: {})
+        Query::BoundQuery.new(sql: sql,bind_variables: {})
       end
 
       def vtgateservice
-        @vtgatesservice ||= Vtgateservice::Vitess::Service::Stub.new(host)
+        @vtgatesservice ||= Vtgate::Stub.new(host)
       end
 
-      def caller_id(method_name: "", options: {})
-        Vtrpc::CallerID.new(principal: Vitess::Util.local_ip_address, component: Vitess::Util.process_id, subcomponent: method_name)
+      def caller_id(method_name="", options: {})
+        # FIXME : handle with possible exceptions
+        principal = Vitess::Util.local_ip_address.addr.ip_address.encode("UTF-8")
+        component = "process_id: #{Vitess::Util.process_id.to_s}"
+        Vtrpc::CallerID.new({principal: principal, component: component, subcomponent: method_name.to_s})
       end
     end
   end
 end
 
-connection = Vitess::Client.connect
-session  = connection.session
-response = Vitess::Client.query('SELECT * FROM USERS LIMIT 5;')
+response = Vitess::Client.query('SELECT * FROM test_table LIMIT 5;')
 p response.result
