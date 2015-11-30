@@ -35,11 +35,12 @@ module Vitess
       attr_accessor :host
 
       def host
-      'localhost:15999'
+        '192.168.99.100:15001'
+        #'localhost:45678'
       end
 
       def connect
-        # vtgatesservice.begin(Vtgateservice::BeginRequest.new(caller_id: caller_id(:connect)))
+         vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect)))
       end
 
       def end
@@ -47,7 +48,21 @@ module Vitess
 
       def query(sql, options = {})
         session = Vtgate::Session.new
-        vtgateservice.execute(Vtgate::ExecuteRequest.new({caller_id: caller_id(:query), session: session, query: bound_query(sql)}))
+        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: 1}))
+      end
+
+      def query_with_keyspace_ids(sql, options = {})
+        session = Vtgate::Session.new
+        args    = {
+          caller_id: caller_id(:query_with_keyspace_ids),
+          session:   session,
+          query:     bound_query(sql),
+          keyspace:  options[:keyspace],
+          keyspace_ids: ["0"].map{ |str| str.split('').pack('A')},
+          tablet_type: 1
+        }
+        request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
+        vtgate_service.execute_keyspace_ids(request)
       end
 
       private
@@ -56,8 +71,8 @@ module Vitess
         Query::BoundQuery.new(sql: sql,bind_variables: {})
       end
 
-      def vtgateservice
-        @vtgatesservice ||= Vtgate::Stub.new(host)
+      def vtgate_service
+        @vtgate_service ||= Vtgate::Stub.new(host)
       end
 
       def caller_id(method_name="", options: {})
@@ -70,5 +85,24 @@ module Vitess
   end
 end
 
-response = Vitess::Client.query('SELECT * FROM test_table LIMIT 5;')
-p response.result
+require 'logger'
+# RubyLogger defines a logger for gRPC based on the standard ruby logger.
+module RubyLogger
+  def logger
+    LOGGER
+  end
+
+  LOGGER = Logger.new(STDOUT)
+  LOGGER.level = Logger::DEBUG
+end
+
+# GRPC is the general RPC module
+module GRPC
+  # Inject the noop #logger if no module-level logger method has been injected.
+  extend RubyLogger
+end
+
+
+#response = Vitess::Client.query('SELECT * FROM test_table LIMIT 5;')
+#response = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table LIMIT 5;', keyspace: 'test_keyspace')
+#p response.result

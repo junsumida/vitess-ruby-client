@@ -2,7 +2,7 @@
 # Source: vtgateservice.proto for package 'vtgateservice'
 
 require 'grpc'
-require 'vtgateservice'
+require 'proto/vtgateservice'
 
 module Vtgateservice
   module Vitess

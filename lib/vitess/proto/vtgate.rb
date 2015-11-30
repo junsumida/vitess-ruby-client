@@ -3,9 +3,9 @@
 
 require 'google/protobuf'
 
-require 'query'
-require 'topodata'
-require 'vtrpc'
+require 'proto/query'
+require 'proto/topodata'
+require 'proto/vtrpc'
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_message "vtgate.Session" do
     optional :in_transaction, :bool, 1

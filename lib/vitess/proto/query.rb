@@ -3,8 +3,8 @@
 
 require 'google/protobuf'
 
-require 'topodata'
-require 'vtrpc'
+require 'proto/topodata'
+require 'proto/vtrpc'
 Google::Protobuf::DescriptorPool.generated_pool.build do
   add_message "query.Target" do
     optional :keyspace, :string, 1
