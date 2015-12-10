@@ -1,8 +1,6 @@
 language: ruby
-addons:
-  apt:
-    packages:
-    - libgrpc-dev
 rvm:
   - 2.2.3
-before_install: gem install bundler -v 1.10.6
+before_install:
+- gem install bundler -v 1.10.6
+- sudo apt-get install -qq libgrpc-dev
