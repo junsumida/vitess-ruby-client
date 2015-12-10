@@ -26,10 +26,10 @@ module Vtgate
     #rpc :StreamExecuteKeyspaceIds, StreamExecuteKeyspaceIdsRequest, stream(StreamExecuteKeyspaceIdsResponse)
     #rpc :StreamExecuteKeyRanges, StreamExecuteKeyRangesRequest, stream(StreamExecuteKeyRangesResponse)
     rpc :Begin, BeginRequest, BeginResponse
-    #rpc :Commit, CommitRequest, CommitResponse
+    rpc :Commit, CommitRequest, CommitResponse
     #rpc :Rollback, RollbackRequest, RollbackResponse
     #rpc :SplitQuery, SplitQueryRequest, SplitQueryResponse
-    #rpc :GetSrvKeyspace, GetSrvKeyspaceRequest, GetSrvKeyspaceResponse
+    rpc :GetSrvKeyspace, GetSrvKeyspaceRequest, GetSrvKeyspaceResponse
   end
 
   Stub = Service.rpc_stub_class

@@ -31,11 +31,17 @@ end
 module Vitess
   class VtgateServer < Vtgate::Service
     def execute(request, _call)
-      p request.inspect
-      row    = Query::Row.new(lengths: [1], values: 'hogehoge'.split("").pack('A'))
+      row    = Query::Row.new(lengths: [1], values: 'hogehoge'.force_encode("ASCII-8BIT\n"))
       field  = Query::Field.new(name: 'name', type: Query::Type::VARCHAR)
-      result = Query::QueryResult.new(fields: [], rows_affected: 1, insert_id: 1, rows: [nil])
+      result = Query::QueryResult.new(fields: [field, field], rows_affected: 1, insert_id: 1, rows: [row, row])
+      RubyLogger::LOGGER.info row.values
       Query::ExecuteResponse.new(result: result)
+    end
+
+    def begin(request, _call)
+    end
+
+    def execute_keyspace_ids(request, _call)
     end
   end
 end

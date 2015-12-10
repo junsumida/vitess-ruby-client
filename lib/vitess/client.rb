@@ -35,7 +35,7 @@ module Vitess
       attr_accessor :host
 
       def host
-        '192.168.99.100:15001'
+        '192.168.99.100:15002'
         #'localhost:45678'
       end
 
@@ -43,22 +43,29 @@ module Vitess
          vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect)))
       end
 
+      def commit(args={})
+        vtgate_service.commit(Vtgate::CommitRequest.new(args))
+      end
+
       def end
       end
 
-      def query(sql, options = {})
-        session = Vtgate::Session.new
-        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: 1}))
+      def get_server_keyspace(keyspace_name='')
+        vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name }))
       end
 
-      def query_with_keyspace_ids(sql, options = {})
+      def query(sql, tablet_type: 1)
         session = Vtgate::Session.new
+        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: tablet_type}))
+      end
+
+      def query_with_keyspace_ids(sql, keyspace: "", session: Vtgate::Session.new)
         args    = {
           caller_id: caller_id(:query_with_keyspace_ids),
           session:   session,
           query:     bound_query(sql),
-          keyspace:  options[:keyspace],
-          keyspace_ids: ["0"].map{ |str| str.split('').pack('A')},
+          keyspace:  keyspace,
+          keyspace_ids: ['0'.encode('ASCII-8BIT')],
           tablet_type: 1
         }
         request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
@@ -76,7 +83,7 @@ module Vitess
       end
 
       def caller_id(method_name="", options: {})
-        # FIXME : handle with possible exceptions
+        # FIXME : need to handle potentially possible exceptions
         principal = Vitess::Util.local_ip_address.addr.ip_address.encode("UTF-8")
         component = "process_id: #{Vitess::Util.process_id.to_s}"
         Vtrpc::CallerID.new({principal: principal, component: component, subcomponent: method_name.to_s})
@@ -102,7 +109,9 @@ module GRPC
   extend RubyLogger
 end
 
-
-#response = Vitess::Client.query('SELECT * FROM test_table LIMIT 5;')
+insert_sql = 'insert into test_keyspace.test_table values ("is it really v")'
+binding.pry
+Vitess::Client.query(insert_sql, tablet_type: 0)
+Vitess::Client.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace')
 #response = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table LIMIT 5;', keyspace: 'test_keyspace')
 #p response.result
