@@ -9,6 +9,9 @@ require 'proto/query'
 require 'proto/vtgate'
 require 'proto/vtgateservice'
 
+require 'proto/vtctldata'
+require 'proto/vtctlservice_services'
+
 # Util
 require 'socket'
 
@@ -26,6 +29,24 @@ module Vitess
 
       def local_ip_address
         Socket.getifaddrs.select(&:broadaddr).find{ |ip_addr| NETWORK_INTERFACE_NAMES.include?(ip_addr.name) && ip_addr.addr.ipv4? }
+      end
+    end
+  end
+
+  class VtCtrl
+    class Client
+      def initialize(host: '')
+        @host = host
+      end
+
+      def execute(args)
+        vtctl_service.execute_vtctl_command(Vtctldata::ExecuteVtctlCommandRequest.new(args))
+      end
+
+      private
+
+      def vtctl_service
+        @vtctl_service ||= Vtctl::Stub.new(@host)
       end
     end
   end
@@ -109,9 +130,11 @@ module GRPC
   extend RubyLogger
 end
 
-insert_sql = 'insert into test_keyspace.test_table values ("is it really v")'
+insert_sql = 'insert into test_table(msg) values("mogemoge")'
 binding.pry
-Vitess::Client.query(insert_sql, tablet_type: 0)
-Vitess::Client.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace')
-#response = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table LIMIT 5;', keyspace: 'test_keyspace')
-#p response.result
+
+transaction = Vitess::Client.connect
+insert_resp = Vitess::Client.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace', session: transaction.session)
+commit      = Vitess::Client.commit(session: insert_resp.session)
+select_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
+

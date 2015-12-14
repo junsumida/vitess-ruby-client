@@ -2,23 +2,22 @@
 # Source: vtctlservice.proto for package 'vtctlservice'
 
 require 'grpc'
-require 'vtctlservice'
+require 'proto/vtctldata'
+require 'proto/vtctlservice'
 
-module Vtctlservice
-  module Vtctl
+module Vtctl
 
-    # TODO: add proto service documentation here
-    class Service
+  # TODO: add proto service documentation here
+  class Service
 
-      include GRPC::GenericService
+    include GRPC::GenericService
 
-      self.marshal_class_method = :encode
-      self.unmarshal_class_method = :decode
-      self.service_name = 'vtctlservice.Vtctl'
+    self.marshal_class_method = :encode
+    self.unmarshal_class_method = :decode
+    self.service_name = 'vtctlservice.Vtctl'
 
-      rpc :ExecuteVtctlCommand, ExecuteVtctlCommandRequest, stream(ExecuteVtctlCommandResponse)
-    end
-
-    Stub = Service.rpc_stub_class
+    rpc :ExecuteVtctlCommand, Vtctldata::ExecuteVtctlCommandRequest, stream(Vtctldata::ExecuteVtctlCommandResponse)
   end
+
+  Stub = Service.rpc_stub_class
 end
