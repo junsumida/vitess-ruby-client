@@ -112,32 +112,3 @@ module Vitess
     end
   end
 end
-
-require 'logger'
-# RubyLogger defines a logger for gRPC based on the standard ruby logger.
-module RubyLogger
-  def logger
-    LOGGER
-  end
-
-  LOGGER = Logger.new(STDOUT)
-  LOGGER.level = Logger::DEBUG
-end
-
-# GRPC is the general RPC module
-module GRPC
-  # Inject the noop #logger if no module-level logger method has been injected.
-  extend RubyLogger
-end
-
-insert_sql = 'insert into test_table(msg) values("mogemoge")'
-
-initial_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
-initial_row_count = initial_resp.result.rows.count
-
-transaction = Vitess::Client.connect
-insert_resp = Vitess::Client.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace', session: transaction.session)
-commit      = Vitess::Client.commit(session: insert_resp.session)
-select_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
-
-raise 'ROW COUNT ERROR' if select_resp.result.rows.count == initial_row_count
