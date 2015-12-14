@@ -38,39 +38,46 @@ module Vitess
 
     def initialize(host:'localhost:15002')
       @vtgate_service = Vtgate::Stub.new(host)
+      @session        = Vtgate::Session.new
+    end
+
+    def command
+      resp = yield
+      @session = resp.session
+      resp
     end
 
     def connect
-       vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect)))
+      command { vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect))) }
     end
 
     def commit(args={})
-      vtgate_service.commit(Vtgate::CommitRequest.new(args))
-    end
-
-    def end
+      resp = vtgate_service.commit(Vtgate::CommitRequest.new(session: @session))
+      @session = Vtgate::Session.new
+      resp
     end
 
     def get_server_keyspace(keyspace_name='')
-      vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name }))
+      command { vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name })) }
     end
 
     def query(sql, tablet_type: 1)
-      session = Vtgate::Session.new
-      vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: tablet_type}))
+      command {
+        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: @session, query: bound_query(sql), tablet_type: tablet_type}))
+      }
     end
 
-    def query_with_keyspace_ids(sql, keyspace: "", session: Vtgate::Session.new)
+    def query_with_keyspace_ids(sql, keyspace: "")
       args    = {
         caller_id: caller_id(:query_with_keyspace_ids),
-        session:   session,
+        session:   @session,
         query:     bound_query(sql),
         keyspace:  keyspace,
         keyspace_ids: ['0'.encode('ASCII-8BIT')],
         tablet_type: 1
       }
       request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
-      vtgate_service.execute_keyspace_ids(request)
+      command { vtgate_service.execute_keyspace_ids(request) }
     end
 
     private
