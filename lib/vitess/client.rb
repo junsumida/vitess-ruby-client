@@ -131,10 +131,13 @@ module GRPC
 end
 
 insert_sql = 'insert into test_table(msg) values("mogemoge")'
-binding.pry
+
+initial_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
+initial_row_count = initial_resp.result.rows.count
 
 transaction = Vitess::Client.connect
 insert_resp = Vitess::Client.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace', session: transaction.session)
 commit      = Vitess::Client.commit(session: insert_resp.session)
 select_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
 
+raise 'ROW COUNT ERROR' if select_resp.result.rows.count == initial_row_count
