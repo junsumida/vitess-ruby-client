@@ -9,8 +9,8 @@ require 'proto/query'
 require 'proto/vtgate'
 require 'proto/vtgateservice'
 
-require 'proto/vtctldata'
-require 'proto/vtctlservice_services'
+# load Vtctl
+require 'vtctl/client'
 
 # Util
 require 'socket'
@@ -29,24 +29,6 @@ module Vitess
 
       def local_ip_address
         Socket.getifaddrs.select(&:broadaddr).find{ |ip_addr| NETWORK_INTERFACE_NAMES.include?(ip_addr.name) && ip_addr.addr.ipv4? }
-      end
-    end
-  end
-
-  class VtCtrl
-    class Client
-      def initialize(host: '')
-        @host = host
-      end
-
-      def execute(args)
-        vtctl_service.execute_vtctl_command(Vtctldata::ExecuteVtctlCommandRequest.new(args))
-      end
-
-      private
-
-      def vtctl_service
-        @vtctl_service ||= Vtctl::Stub.new(@host)
       end
     end
   end
@@ -112,3 +94,4 @@ module Vitess
     end
   end
 end
+

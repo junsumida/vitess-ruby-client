@@ -15,6 +15,6 @@ class Vitess::ClientIntegrationTest < Minitest::Test
     commit      = Vitess::Client.commit(session: insert_resp.session)
     select_resp = Vitess::Client.query_with_keyspace_ids('SELECT * FROM test_table', keyspace: 'test_keyspace')
     assert_kind_of Fixnum, select_resp.result.rows.count, 'rows count should be a fixnum'
-    refute_equal initial_row_count, select_resp.result.rows.count, 'row count should be updated'
+    assert_equal initial_row_count, select_resp.result.rows.count - 1, 'one row should be inserted'
   end
 end
