@@ -34,63 +34,56 @@ module Vitess
   end
 
   class Client
-    class << self
-      attr_accessor :host
+    attr_reader :vtgate_service
 
-      def host
-        '192.168.99.100:15002'
-        #'localhost:45678'
-      end
+    def initialize(host:'localhost:15002')
+      @vtgate_service = Vtgate::Stub.new(host)
+    end
 
-      def connect
-         vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect)))
-      end
+    def connect
+       vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect)))
+    end
 
-      def commit(args={})
-        vtgate_service.commit(Vtgate::CommitRequest.new(args))
-      end
+    def commit(args={})
+      vtgate_service.commit(Vtgate::CommitRequest.new(args))
+    end
 
-      def end
-      end
+    def end
+    end
 
-      def get_server_keyspace(keyspace_name='')
-        vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name }))
-      end
+    def get_server_keyspace(keyspace_name='')
+      vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name }))
+    end
 
-      def query(sql, tablet_type: 1)
-        session = Vtgate::Session.new
-        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: tablet_type}))
-      end
+    def query(sql, tablet_type: 1)
+      session = Vtgate::Session.new
+      vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: session, query: bound_query(sql), tablet_type: tablet_type}))
+    end
 
-      def query_with_keyspace_ids(sql, keyspace: "", session: Vtgate::Session.new)
-        args    = {
-          caller_id: caller_id(:query_with_keyspace_ids),
-          session:   session,
-          query:     bound_query(sql),
-          keyspace:  keyspace,
-          keyspace_ids: ['0'.encode('ASCII-8BIT')],
-          tablet_type: 1
-        }
-        request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
-        vtgate_service.execute_keyspace_ids(request)
-      end
+    def query_with_keyspace_ids(sql, keyspace: "", session: Vtgate::Session.new)
+      args    = {
+        caller_id: caller_id(:query_with_keyspace_ids),
+        session:   session,
+        query:     bound_query(sql),
+        keyspace:  keyspace,
+        keyspace_ids: ['0'.encode('ASCII-8BIT')],
+        tablet_type: 1
+      }
+      request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
+      vtgate_service.execute_keyspace_ids(request)
+    end
 
-      private
+    private
 
-      def bound_query(sql)
-        Query::BoundQuery.new(sql: sql,bind_variables: {})
-      end
+    def bound_query(sql)
+      Query::BoundQuery.new(sql: sql,bind_variables: {})
+    end
 
-      def vtgate_service
-        @vtgate_service ||= Vtgate::Stub.new(host)
-      end
-
-      def caller_id(method_name="", options: {})
-        # FIXME : need to handle potentially possible exceptions
-        principal = Vitess::Util.local_ip_address.addr.ip_address.encode("UTF-8")
-        component = "process_id: #{Vitess::Util.process_id.to_s}"
-        Vtrpc::CallerID.new({principal: principal, component: component, subcomponent: method_name.to_s})
-      end
+    def caller_id(method_name="", options: {})
+      # FIXME : need to handle potentially possible exceptions
+      principal = Vitess::Util.local_ip_address.addr.ip_address.encode("UTF-8")
+      component = "process_id: #{Vitess::Util.process_id.to_s}"
+      Vtrpc::CallerID.new({principal: principal, component: component, subcomponent: method_name.to_s})
     end
   end
 end

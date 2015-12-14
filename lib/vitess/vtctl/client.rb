@@ -14,18 +14,14 @@ module Vitess
     class Client
       include Generic
 
+      attr_reader :vtctl_service
+
       def initialize(host: '')
-        @host = host
+        @vtctl_service = ::Vtctl::Stub.new(host)
       end
 
       def execute(args)
         vtctl_service.execute_vtctl_command(Vtctldata::ExecuteVtctlCommandRequest.new(args))
-      end
-
-      private
-
-      def vtctl_service
-        @vtctl_service ||= ::Vtctl::Stub.new(@host)
       end
     end
   end
