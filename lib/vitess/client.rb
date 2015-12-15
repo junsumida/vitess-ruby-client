@@ -41,9 +41,9 @@ module Vitess
       @session        = Vtgate::Session.new
     end
 
-    def command
+    def command(session=nil)
       resp = yield
-      @session = resp.session
+      @session = session.nil? ? resp.session : session
       resp
     end
 
@@ -52,9 +52,7 @@ module Vitess
     end
 
     def commit(args={})
-      resp = vtgate_service.commit(Vtgate::CommitRequest.new(session: @session))
-      @session = Vtgate::Session.new
-      resp
+      command(Vtgate::Session.new) { vtgate_service.commit(Vtgate::CommitRequest.new(session: @session)) }
     end
 
     def get_server_keyspace(keyspace_name='')
