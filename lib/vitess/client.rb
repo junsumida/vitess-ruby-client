@@ -55,6 +55,10 @@ module Vitess
       command(Vtgate::Session.new) { vtgate_service.commit(Vtgate::CommitRequest.new(session: @session)) }
     end
 
+    def rollback
+      command(Vtgate::Session.new) { vtgate_service.rollback(Vtgate::RollbackRequest.new(session: @session, caller_id: caller_id(:rollback))) }
+    end
+
     def get_server_keyspace(keyspace_name='')
       command { vtgate_service.get_srv_keyspace(Vtgate::GetSrvKeyspaceRequest.new({ keyspace: keyspace_name })) }
     end

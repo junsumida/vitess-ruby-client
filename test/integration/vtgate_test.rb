@@ -17,4 +17,16 @@ class Vitess::ClientIntegrationTest < Minitest::Test
     assert_kind_of Fixnum, select_resp.result.rows.count, 'rows count should be a fixnum'
     assert_equal initial_row_count, select_resp.result.rows.count - 1, 'one row should be inserted'
   end
+
+  def test_rollback
+    insert_sql = 'insert into test_table(msg) values("hogehoge")'
+    vtgate     = Vitess::Client.new(host: '192.168.99.100:15002')
+
+    vtgate.connect
+    insert_resp = vtgate.query_with_keyspace_ids(insert_sql, keyspace: 'test_keyspace')
+    assert insert_resp
+    vtgate.rollback
+    select_resp = vtgate.query_with_keyspace_ids('select * from test_table where msg = "hogehoge"', keyspace: 'test_keyspace')
+    assert_equal select_resp.result.rows.count, 0, 'inserting "hogehoge" must be rollbacked'
+  end
 end

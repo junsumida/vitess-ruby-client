@@ -27,7 +27,7 @@ module Vtgate
     #rpc :StreamExecuteKeyRanges, StreamExecuteKeyRangesRequest, stream(StreamExecuteKeyRangesResponse)
     rpc :Begin, BeginRequest, BeginResponse
     rpc :Commit, CommitRequest, CommitResponse
-    #rpc :Rollback, RollbackRequest, RollbackResponse
+    rpc :Rollback, RollbackRequest, RollbackResponse
     #rpc :SplitQuery, SplitQueryRequest, SplitQueryResponse
     rpc :GetSrvKeyspace, GetSrvKeyspaceRequest, GetSrvKeyspaceResponse
   end
