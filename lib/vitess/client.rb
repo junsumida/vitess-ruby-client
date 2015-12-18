@@ -47,7 +47,7 @@ module Vitess
       resp
     end
 
-    def connect
+    def begin
       command { vtgate_service.begin(Vtgate::BeginRequest.new(caller_id: caller_id(:connect))) }
     end
 
