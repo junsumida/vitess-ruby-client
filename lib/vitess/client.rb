@@ -45,6 +45,7 @@ module Vitess
     end
 
     def cursor(keyspace: "", keyspace_ids: [], tablet_type: 1)
+      # TODO: use constant tablet_type
       @cursor = {
           keyspace:  keyspace,
           keyspace_ids: keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
@@ -81,6 +82,7 @@ module Vitess
     end
 
     def query_with_keyspace_ids(sql, keyspace: "", keyspace_ids: [])
+      # TODO: validate keyspace & keyspace_ids from args & @cursor
       args    = {
         caller_id: caller_id(:query_with_keyspace_ids),
         session:   @session,
@@ -97,7 +99,7 @@ module Vitess
     end
 
     def caller_id(method_name="", options: {})
-      # FIXME : need to handle potentially possible exceptions
+      # FIXME : need to handle potential exceptions
       principal = Vitess::Util.local_ip_address.addr.ip_address.encode("UTF-8")
       component = "process_id: #{Vitess::Util.process_id.to_s}"
       Vtrpc::CallerID.new({principal: principal, component: component, subcomponent: method_name.to_s})
