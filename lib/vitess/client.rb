@@ -45,9 +45,11 @@ module Vitess
     end
 
     def cursor(keyspace: "", keyspace_ids: [], tablet_type: 1)
-      @keyspace     = keyspace
-      @keyspace_ids = keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
-      @tablet_type  = tablet_type
+      @cursor = {
+          keyspace:  keyspace,
+          keyspace_ids: keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
+          tablet_type: 1
+      }
     end
 
     def command(session=nil)
@@ -83,10 +85,7 @@ module Vitess
         caller_id: caller_id(:query_with_keyspace_ids),
         session:   @session,
         query:     bound_query(sql),
-        keyspace:  keyspace,
-        keyspace_ids: keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
-        tablet_type: 1
-      }
+      }.merge(@cursor)
       request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
       command { vtgate_service.execute_keyspace_ids(request) }
     end
