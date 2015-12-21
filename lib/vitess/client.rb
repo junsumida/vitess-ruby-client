@@ -15,6 +15,8 @@ require 'vtctl/client'
 # Util
 require 'socket'
 
+require 'keyspace_translator'
+
 # debug
 require 'pry-byebug'
 
@@ -36,9 +38,16 @@ module Vitess
   class Client
     attr_reader :vtgate_service
 
-    def initialize(host:'localhost:15002')
+    def initialize(host:'localhost:15002', default_sharding_type: :consistent_hashing)
       @vtgate_service = Vtgate::Stub.new(host)
       @session        = Vtgate::Session.new
+      @keyspace_translator = Vitess::KeyspaceTranslator.new(sharding_type: default_sharding_type)
+    end
+
+    def cursor(keyspace: "", keyspace_ids: [], tablet_type: 1)
+      @keyspace     = keyspace
+      @keyspace_ids = keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
+      @tablet_type  = tablet_type
     end
 
     def command(session=nil)
@@ -69,13 +78,13 @@ module Vitess
       }
     end
 
-    def query_with_keyspace_ids(sql, keyspace: "")
+    def query_with_keyspace_ids(sql, keyspace: "", keyspace_ids: [])
       args    = {
         caller_id: caller_id(:query_with_keyspace_ids),
         session:   @session,
         query:     bound_query(sql),
         keyspace:  keyspace,
-        keyspace_ids: ['0'.encode('ASCII-8BIT')],
+        keyspace_ids: keyspace_ids.map{ |id| @keyspace_translator.translate(id).encode('ASCII-8BIT') },
         tablet_type: 1
       }
       request = Vtgate::ExecuteKeyspaceIdsRequest.new(args)
