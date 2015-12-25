@@ -11,8 +11,31 @@ module Vitess
       end
     end
 
+    module Keyspace
+      def create_keyspace(keyspace_name)
+        execute(args: ['CreateKeyspace', keyspace_name])
+      end
+
+      def get_keyspace(keyspace_name)
+        execute(args: ['GetKeyspace', keyspace_name])
+      end
+
+      def delete_keyspacce(keyspace_name)
+        execute(args: ['DeleteKeyspace', keyspace_name])
+      end
+    end
+
+    module Schema
+      def apply_schema(sql, keyspace_name)
+        execute(args: ['ApplySchema', "-sql=#{sql}", keyspace_name])
+      end
+
+      def get_vtgate_schema()
+    end
+
     class Client
       include Generic
+      include Keyspace
 
       attr_reader :vtctl_service
 
