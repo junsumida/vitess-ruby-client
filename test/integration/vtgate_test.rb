@@ -96,4 +96,12 @@ class Vitess::ClientIntegrationTest < Minitest::Test
     select_resp = vtgate.query_with_keyspace_ids(select_sql('sticky_toffee'))
     assert_equal 1, select_resp.result.rows.count, 'A row with sticky_toffee msg should exist in the test_table'
   end
+
+  def test_vtgate_v3
+    vtgate = Vitess::Client.new(host:'192.168.99.100:15002', default_sharding_type: :id)
+    result_1 = vtgate.query("select * from user_uuids")
+    assert_equal 0, result_1.result.rows.count
+    result_1 = vtgate.query("select * from user_uuids where user_id = 1")
+    assert_equal 0, result_1.result.rows.count
+  end
 end

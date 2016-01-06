@@ -29,8 +29,6 @@ module Vitess
       def apply_schema(sql, keyspace_name)
         execute(args: ['ApplySchema', "-sql=#{sql}", keyspace_name])
       end
-
-      def get_vtgate_schema()
     end
 
     class Client

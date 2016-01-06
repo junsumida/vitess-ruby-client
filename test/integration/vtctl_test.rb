@@ -15,7 +15,7 @@ class Vitess::Vtctl::ClientTest < Minitest::Test
     create_res = vtctl_client.create_keyspace(keyspace_name)
     get_res    = vtctl_client.get_keyspace(keyspace_name)
     result     = vtctl_client.list_all_tablets('test')
-    binding.pry
+    # FIXME: NOT Actually tested
     assert result
   end
 end
