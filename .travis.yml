@@ -3,7 +3,7 @@ rvm:
   - 2.2.4
 before_install:
 - gem install bundler -v 1.10.6
-- sudo travis-install.sh
+- sudo travis_install.sh
 
 script:
   - ./configure --with-grpc=/opt/libgrpc && make -j6
