@@ -3,7 +3,7 @@ require 'active_record/connection_adapters/abstract_mysql_adapter'
 module ActiveRecord
   module ConnectionHandling # :nodoc:
     # Establishes a connection to the database that's used by all Active Record objects.
-    def mysql2_connection(config)
+    def vitess_connection(config)
       config = config.symbolize_keys
 
       config[:username] = 'root' if config[:username].nil?
@@ -17,9 +17,10 @@ module ActiveRecord
       #  end
       #end
 
-      client = Vitess::Client.new(config)
-      ConnectionAdapters::Mysql2Adapter.new(client, logger, nil, config)
-    rescue Vitess::Error => error
+      # FIXME
+      client = Vitess::Client.new(host: config[:host])
+      ConnectionAdapters::VitessAdapter.new(client, logger, nil, config)
+    rescue StandardError => error
       if error.message.include?("Unknown database")
         raise ActiveRecord::NoDatabaseError
       else
@@ -63,7 +64,8 @@ module ActiveRecord
       #++
 
       def quote_string(string)
-        @connection.escape(string)
+        #@connection.escape(string)
+        string.inspect[1..-2]
       end
 
       #--
@@ -72,7 +74,8 @@ module ActiveRecord
 
       def active?
         return false unless @connection
-        @connection.ping
+        true # FIXME
+        #@connection.ping
       end
 
       def reconnect!
@@ -86,10 +89,10 @@ module ActiveRecord
       # Otherwise, this method does nothing.
       def disconnect!
         super
-        unless @connection.nil?
-          @connection.close
-          @connection = nil
-        end
+        #unless @connection.nil?
+        #  @connection.close
+        #  @connection = nil
+        #end
       end
 
       #--
@@ -101,7 +104,7 @@ module ActiveRecord
       def select_one(arel, name = nil, binds = [])
         arel, binds = binds_from_relation(arel, binds)
         execute(to_sql(arel, binds), name).each(as: :hash) do |row|
-          @connection.next_result while @connection.more_results?
+          #@connection.next_result while @connection.more_results?
           return row
         end
       end
@@ -110,7 +113,7 @@ module ActiveRecord
       # Order is the same as that returned by +columns+.
       def select_rows(sql, name = nil, binds = [])
         result = execute(sql, name)
-        @connection.next_result while @connection.more_results?
+        #@connection.next_result while @connection.more_results?
         result.to_a
       end
 
@@ -119,15 +122,14 @@ module ActiveRecord
         if @connection
           # make sure we carry over any changes to ActiveRecord::Base.default_timezone that have been
           # made since we established the connection
-          @connection.query_options[:database_timezone] = ActiveRecord::Base.default_timezone
+          # @connection.query_options[:database_timezone] = ActiveRecord::Base.default_timezone
         end
-
+[p]
         super
       end
 
       def exec_query(sql, name = 'SQL', binds = [], prepare: false)
         result = execute(sql, name)
-        @connection.next_result while @connection.more_results?
         ActiveRecord::Result.new(result.fields, result.to_a)
       end
 
@@ -143,8 +145,9 @@ module ActiveRecord
       end
 
       def exec_delete(sql, name, binds)
-        execute to_sql(sql, binds), name
-        @connection.affected_rows
+        resp = execute to_sql(sql, binds), name
+        resp.result.rows_affected
+        #@connection.affected_rows
       end
       alias :exec_update :exec_delete
 
@@ -155,12 +158,12 @@ module ActiveRecord
       private
 
       def connect
-        @connection = Mysql2::Client.new(@config)
+        @connection = Vitess::Client.new(@config)
         configure_connection
       end
 
       def configure_connection
-        @connection.query_options.merge!(:as => :array)
+        #@connection.query_options.merge!(:as => :array)
         super
       end
 

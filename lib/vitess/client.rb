@@ -38,7 +38,7 @@ module Vitess
   class Client
     attr_reader :vtgate_service
 
-    def initialize(host:'localhost:15002', default_sharding_type: :consistent_hashing)
+    def initialize(host:'localhost:15002', default_sharding_type: :consistent_hashing, adapter: 'vitess', username: nil, flags: nil)
       @vtgate_service = Vtgate::Stub.new(host)
       @session        = Vtgate::Session.new
       @keyspace_translator = Vitess::KeyspaceTranslator.new(sharding_type: default_sharding_type)
