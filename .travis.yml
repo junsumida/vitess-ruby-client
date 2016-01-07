@@ -1,6 +1,9 @@
 language: ruby
 rvm:
-  - 2.2.3
+  - 2.2.4
 before_install:
 - gem install bundler -v 1.10.6
-- sudo apt-get install -qq libgrpc-dev
+- sudo travis-install.sh
+
+script:
+  - ./configure --with-grpc=/opt/libgrpc && make -j6
