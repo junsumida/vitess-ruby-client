@@ -3,19 +3,23 @@ require 'test_helper'
 require 'active_record'
 
 class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
-  ActiveRecord::Base.configurations = {
-      'test' => {
-          'adapter' => 'vitess',
-          'host'    => '192.168.99.100:15002'
-      }
+  ActiveRecord::Base.configurations = {}
+  config = {
+      adapter: 'mysql2',
+      host: 'localhost',
+      database: 'test',
+      vtgate_config: { host: '192.168.99.100:15002' },
   }
 
-  ActiveRecord::Base.establish_connection(adapter: 'vitess', host: '192.168.99.100:15002', mysql_config: { host: 'localhost' })
+  class CreateUsers < ActiveRecord::Migration
+  end
 
-  class UserModel < ActiveRecord::Base
+  ActiveRecord::Base.establish_connection(config)
+
+  class User < ActiveRecord::Base
   end
 
   def test_active_recoord
-    UserModel.new
+    User.new
   end
 end
