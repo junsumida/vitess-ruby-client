@@ -1,5 +1,8 @@
 require 'active_record/connection_adapters/abstract_mysql_adapter'
 
+gem 'mysql2', '>= 0.3.13', '< 0.5'
+require 'mysql2'
+
 module ActiveRecord
   module ConnectionHandling # :nodoc:
     # Establishes a connection to the database that's used by all Active Record objects.
@@ -18,7 +21,8 @@ module ActiveRecord
       #end
 
       # FIXME
-      client = Vitess::Client.new(host: config[:host])
+      client                = Vitess::Client.new(host: config[:host])
+      config[:mysql_client] = Mysql2::Client.new(config[:mysql_config])
       ConnectionAdapters::VitessAdapter.new(client, logger, nil, config)
     rescue StandardError => error
       if error.message.include?("Unknown database")
@@ -36,6 +40,7 @@ module ActiveRecord
       def initialize(connection, logger, connection_options, config)
         super
         @prepared_statements = false
+        @schema_connection   = config[:mysql_client]
         configure_connection
       end
 

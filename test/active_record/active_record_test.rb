@@ -10,7 +10,7 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
       }
   }
 
-  ActiveRecord::Base.establish_connection(adapter: 'vitess', host: '192.168.99.100:15002')
+  ActiveRecord::Base.establish_connection(adapter: 'vitess', host: '192.168.99.100:15002', mysql_config: { host: 'localhost' })
 
   class UserModel < ActiveRecord::Base
   end
