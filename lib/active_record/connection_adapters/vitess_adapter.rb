@@ -6,7 +6,7 @@ require 'mysql2'
 module ActiveRecord
   module ConnectionHandling # :nodoc:
     # Establishes a connection to the database that's used by all Active Record objects.
-    def mysql2_connection(config)
+    def vitess_connection(config)
       config = config.symbolize_keys
 
       config[:username] = 'root' if config[:username].nil?
@@ -19,7 +19,7 @@ module ActiveRecord
       options = [config[:host], config[:username], config[:password], config[:database], config[:port], config[:socket], 0]
 
       config[:vtgate_client] = Vitess::Client.new(config[:vtgate_config])
-      ConnectionAdapters::Mysql2Adapter.new(client, logger, options, config)
+      ConnectionAdapters::VitessAdapter.new(client, logger, options, config)
     rescue Mysql2::Error => error
       if error.message.include?("Unknown database")
         raise ActiveRecord::NoDatabaseError.new(error.message, error)
@@ -30,12 +30,12 @@ module ActiveRecord
   end
 
   module ConnectionAdapters
-    class Mysql2Adapter < AbstractMysqlAdapter
-      ADAPTER_NAME = 'Mysql2'.freeze
+    class VitessAdapter < AbstractMysqlAdapter
+      ADAPTER_NAME = 'Vitess'.freeze
 
       def initialize(connection, logger, connection_options, config)
-        super
         @vtgate_connection   = config[:vtgate_client]
+        super
         @prepared_statements = false
         configure_connection
       end

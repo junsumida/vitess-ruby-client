@@ -5,7 +5,7 @@ require 'active_record'
 class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
   ActiveRecord::Base.configurations = {}
   config = {
-      adapter: 'mysql2',
+      adapter: 'vitess',
       host: 'localhost',
       database: 'test',
       vtgate_config: { host: '192.168.99.100:15002' },
@@ -16,10 +16,12 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
 
   ActiveRecord::Base.establish_connection(config)
 
-  class User < ActiveRecord::Base
+  class UserUuid < ActiveRecord::Base
   end
 
   def test_active_recoord
-    User.new
+    uuid = UserUuid.create(uuid: 'hoge', user_id: rand(10000000))
+    p uuid
+    p uuid.reload
   end
 end
