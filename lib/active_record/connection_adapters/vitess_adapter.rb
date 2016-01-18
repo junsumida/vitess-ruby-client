@@ -243,7 +243,7 @@ module ActiveRecord
 
       def insert_sql(sql, name = nil, pk = nil, id_value = nil, sequence_name = nil)
         super
-        id_value || @connection.last_id
+        id_value || @vtgate_connection.last_id
       end
       alias :create :insert_sql
 
@@ -258,7 +258,7 @@ module ActiveRecord
       alias :exec_update :exec_delete
 
       def last_inserted_id(result)
-        @connection.last_id
+        @vtgate_connection.last_id
       end
 
       private

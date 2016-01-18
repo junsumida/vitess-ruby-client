@@ -35,8 +35,34 @@ module Vitess
     end
   end
 
+  class Result
+    include Enumerable
+    attr_reader :query_response
+
+    def initialize(query_response)
+      @query_response = query_response
+    end
+
+    def fields
+      query_response.result.fields.map(&:name)
+    end
+
+    def last_id
+      query_response.result.insert_id
+    end
+
+    def to_a
+      each.to_a
+    end
+
+    def each
+      # <Query::Row: lengths: [2, 7, 4], values: "328601065hoge">
+      query_response.result.rows.dup.map{ |row| row.lengths.map{ |n| row.values.slice!(0, n) } }
+    end
+  end
+
   class Client
-    attr_reader :vtgate_service
+    attr_reader :vtgate_service, :last_id
 
     def initialize(host:'localhost:15002', default_sharding_type: :consistent_hashing, adapter: 'vitess', username: nil, flags: nil)
       @vtgate_service = Vtgate::Stub.new(host)
@@ -76,11 +102,11 @@ module Vitess
     end
 
     def query(sql, tablet_type: 1)
-      command {
-        resp = vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: @session, query: bound_query(sql), tablet_type: tablet_type}))
-        p resp
-        resp
+      r = Result.new command {
+        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: @session, query: bound_query(sql), tablet_type: tablet_type}))
       }
+      @last_id = r.last_id
+      r
     end
 
     def query_with_keyspace_ids(sql, keyspace: "", keyspace_ids: [])
