@@ -103,7 +103,9 @@ module Vitess
 
     def query(sql, tablet_type: 1)
       r = Result.new command {
-        vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: @session, query: bound_query(sql), tablet_type: tablet_type}))
+        resp = vtgate_service.execute(Vtgate::ExecuteRequest.new({ caller_id: caller_id(:query), session: @session, query: bound_query(sql), tablet_type: tablet_type}))
+        p resp
+        resp
       }
       @last_id = r.last_id
       r

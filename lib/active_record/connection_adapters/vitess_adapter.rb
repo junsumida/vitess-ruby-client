@@ -231,7 +231,28 @@ module ActiveRecord
           @connection.query_options[:database_timezone] = ActiveRecord::Base.default_timezone
         end
 
-        super
+        # hijacking super method
+        if name == "SCHEMA"
+          log(sql, name) { @connection.query(sql) }
+        elsif name.nil?
+          if sql == "BEGIN"
+            return log(sql, name) { @vtgate_connection.begin }
+          end
+
+          if sql == "ROLLBACK"
+            return log(sql, name) { @vtgate_connection.rollback }
+          end
+
+          if sql == "COMMIT"
+            return log(sql, name) { @vtgate_connection.commit }
+          end
+
+          log(sql, name) { @vtgate_connection.query(sql) }
+        else
+          # FIXME
+          p sql
+          log(sql, name) { @vtgate_connection.query(sql) }
+        end
       end
 
       def exec_query(sql, name = 'SQL', binds = [])

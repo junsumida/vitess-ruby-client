@@ -1,6 +1,7 @@
 require 'test_helper'
 
 require 'active_record'
+require 'active_record/vitess_shard_assistant'
 
 class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
   ActiveRecord::Base.configurations = {}
@@ -17,6 +18,11 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
   ActiveRecord::Base.establish_connection(config)
 
   class UserUuid < ActiveRecord::Base
+    shard_key :user_id
+  end
+
+  def test_shard_assistant
+    assert UserUuid.singleton_class.ancestors.include?(ActiveRecord::VitessShardAssistant), "vitess_shard_assistant should be included by ActiveRecord::Base"
   end
 
   def test_active_recoord
@@ -30,5 +36,14 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
 
     uuid_found = UserUuid.where(user_id: user_id, id: uuid).first
     assert_equal('hoge', uuid_found.uuid, "uuid must be hoge")
+
+    uuid_found.uuid = "moge"
+    uuid_found.save
+    uuid_found.reload
+
+    binding.pry
+
+    #uuid_found.update(uuid: "moge")
+    #assert_equal(uuid_found.reload.uuid, "moge", "now uuid should be moge")
   end
 end
