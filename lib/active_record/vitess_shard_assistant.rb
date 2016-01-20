@@ -69,7 +69,7 @@ module ActiveRecord
         scope.unscope!(where: @klass.inheritance_column)
       end
 
-      fail ArgumentError if shard_key.nil? && !@klass.sharded?
+      fail NoShardKeyError if shard_key.nil? && !@klass.sharded?
 
       relation = scope.where(@klass.primary_key => (id_was || id))
       relation = relation.where(@klass.shard_column => shard_key) if @klass.sharded?
