@@ -11,7 +11,7 @@ cd pre_build
 git clone https://github.com/grpc/grpc.git
 cd grpc
 # Currently we can build against this gRPC label.
-git checkout 4831d02cc2341ec2233ff9d9ef66fb9a86138fb7
+#git checkout 4831d02cc2341ec2233ff9d9ef66fb9a86138fb7
 git submodule update --init
 apt-get install -y build-essential autoconf libtool
 make
