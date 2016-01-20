@@ -50,11 +50,10 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
     assert_equal(0, updated_uuids.count, "deleting shoud works")
   end
 
-  #def test_ar_reload
-  #  user_id = rand(10000000)
-  #  uuid_found = UserUuid.where(user_id: user_id, id: uuid).first
-  #  uuid_found.uuid = "moge"
-  #  uuid_found.save
-  #  uuid_found.reload
-  #end
+  def test_ar_reload
+    user_id = rand(10000000)
+    uuid = UserUuid.create(uuid: 'fugefuge', user_id: user_id)
+    uuid.reload
+    assert(uuid.id, "correctly reloaded")
+  end
 end

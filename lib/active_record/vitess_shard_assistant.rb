@@ -23,6 +23,7 @@ module ActiveRecord
   # Monkey Patches
   module Persistence
     alias_method :_old_update_record, :_update_record
+    alias_method :_old_reload, :reload
 
     def _update_record(attribute_names = self.attribute_names)
       attributes_values = arel_attributes_with_values_for_update(attribute_names)
@@ -32,6 +33,27 @@ module ActiveRecord
       else
         self.class.unscoped._update_record attributes_values, id, id_was, self[self.shard_column.to_sym]
       end
+    end
+
+    def reload(options = nil)
+      clear_aggregation_cache
+      clear_association_cache
+      self.class.connection.clear_query_cache
+
+      fresh_object =
+        if options && options[:lock]
+          rel = self.class.lock(options[:lock]).where(id: id)
+          rel = rel.where(shard_column => self[shard_column]) unless shard_column.nil?
+          self.class.unscoped { rel.first }
+        else
+          rel = self.class.where(id: id)
+          rel = rel.where(shard_column => self[shard_column]) unless shard_column.nil?
+          self.class.unscoped { rel.first }
+        end
+
+      @attributes = fresh_object.instance_variable_get('@attributes')
+      @new_record = false
+      self
     end
   end
 
@@ -63,6 +85,10 @@ module ActiveRecord
       )
     end
   end
+
+
+
+  class NoShardKeyError < StandardError; end
 end
 
 ActiveRecord::Base.extend(ActiveRecord::VitessShardAssistant)
