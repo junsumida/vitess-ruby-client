@@ -34,16 +34,27 @@ class ActiveRecord::ConnectionAdapters::VitessClientTest < Minitest::Test
     uuids_where = UserUuid.where(user_id: user_id)
     refute_equal(0, uuids_where.count, "at least one user_uuid should exist")
 
-    uuid_found = UserUuid.where(user_id: user_id, id: uuid).first
+    uuid_found = UserUuid.where(user_id: user_id, uuid: uuid.uuid).first
     assert_equal('hoge', uuid_found.uuid, "uuid must be hoge")
 
-    uuid_found.uuid = "moge"
-    uuid_found.save
-    uuid_found.reload
+    updated_uuid = 'moge'.freeze
 
-    binding.pry
+    uuid_found.update(uuid: updated_uuid)
+    uuid_updated = UserUuid.where(user_id: user_id, uuid: updated_uuid).first
+    assert_equal(uuid_updated.id, uuid_found.id, "now uuid should be moge")
 
-    #uuid_found.update(uuid: "moge")
-    #assert_equal(uuid_found.reload.uuid, "moge", "now uuid should be moge")
+    delete_response = UserUuid.destroy_all(user_id: user_id, uuid: uuid_updated)
+    assert(delete_response, "destroy response should not be nil")
+
+    updated_uuids = UserUuid.where(user_id: user_id, uuid: uuid_updated)
+    assert_equal(0, updated_uuids.count, "deleting shoud works")
   end
+
+  #def test_ar_reload
+  #  user_id = rand(10000000)
+  #  uuid_found = UserUuid.where(user_id: user_id, id: uuid).first
+  #  uuid_found.uuid = "moge"
+  #  uuid_found.save
+  #  uuid_found.reload
+  #end
 end
