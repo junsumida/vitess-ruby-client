@@ -1,11 +1,11 @@
-matrix:
-  include:
-    - sudo: required
-      dist: trusty
+sudo: required
+services:
+  - docker
 
 language: ruby
 rvm:
   - 2.2.3
+
 before_install:
 - gem install bundler -v 1.10.6
 - sudo ./travis_install.sh
