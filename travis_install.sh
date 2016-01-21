@@ -7,7 +7,13 @@
 # to run from file .travis.yml as root on Ubuntu 12.04 LTS.
 
 # before compiling
-apt-get install -y build-essential libtool info install-info
+apt-get install -y build-essential libtool
+
+# texinfo
+wget http://ftp.gnu.org/gnu/texinfo/texinfo-5.2.tar.xz
+tar -xJvf texinfo-5.2.tar.xz
+cd texinfo-5.2 && ./configure --prefix=/usr && make && sudo make install
+cd ..
 
 # install autoconf from source code
 git clone http://git.sv.gnu.org/r/autoconf.git
