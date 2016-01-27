@@ -26,18 +26,21 @@ module Vitess
     end
 
     module Schema
-      def apply_schema(sql, keyspace_name)
-        execute(args: ['ApplySchema', "-sql=#{sql}", keyspace_name])
+      def apply_schema(sql, keyspace_name=nil)
+        ArgumentError if @default_keyspace.nil? && keyspace_name.nil?
+        execute(args: ['ApplySchema', "-sql=#{sql}", keyspace_name || @default_keyspace])
       end
     end
 
     class Client
       include Generic
       include Keyspace
+      include Schema
 
       attr_reader :vtctl_service
 
-      def initialize(host: '')
+      def initialize(host: '', keyspace: '')
+        @default_keyspace = (keyspace == '' || keyspace.nil?) ? nil : keyspace
         @vtctl_service = ::Vtctl::Stub.new(host)
       end
 

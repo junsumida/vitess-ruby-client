@@ -18,6 +18,7 @@ module ActiveRecord
       client = Mysql2::Client.new(config)
       options = [config[:host], config[:username], config[:password], config[:database], config[:port], config[:socket], 0]
 
+      config[:vtctl_client]  = Vitess::Vtctl::Client.new(config[:vtctl_config].merge('keyspace' => config[:database]).symbolize_keys)
       config[:vtgate_client] = Vitess::Client.new(config[:vtgate_config])
       ConnectionAdapters::VitessAdapter.new(client, logger, options, config)
     rescue Mysql2::Error => error
@@ -35,6 +36,7 @@ module ActiveRecord
 
       def initialize(connection, logger, connection_options, config)
         @vtgate_connection   = config[:vtgate_client]
+        @vtctl_connection    = config[:vtctl_client]
         super
         @prepared_statements = false
         configure_connection
@@ -231,9 +233,15 @@ module ActiveRecord
           @connection.query_options[:database_timezone] = ActiveRecord::Base.default_timezone
         end
 
+        # FIXME
+        # p "sql: #{sql}, name: #{name}"
+
         # hijacking super method
-        if name == "SCHEMA"
+        if name == "SCHEMA" || name == "ActiveRecord::SchemaMigration Load"
           log(sql, name) { @connection.query(sql) }
+        elsif name == "CREATE_TABLE"
+          log(sql, name) { @connection.query(sql) }
+          log(sql, name) { @vtctl_connection.apply_schema(sql) }
         elsif name.nil?
           if sql == "BEGIN"
             return log(sql, name) { @vtgate_connection.begin }
@@ -249,8 +257,6 @@ module ActiveRecord
 
           log(sql, name) { @vtgate_connection.query(sql) }
         else
-          # FIXME
-          p sql
           log(sql, name) { @vtgate_connection.query(sql) }
         end
       end

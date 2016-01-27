@@ -19,3 +19,17 @@ module GRPC
   # Inject the noop #logger if no module-level logger method has been injected.
   extend RubyLogger
 end
+
+require 'active_record'
+require 'active_record/vitess_shard_assistant'
+
+config = {
+    adapter: :vitess,
+    host: 'localhost',
+    database: 'test_keyspace',
+    vtgate_config: { host: '192.168.99.100:15002' },
+    vtctl_config:  { host: 'localhost:15999', keyspace: 'test_keyspace' }
+}
+
+ActiveRecord::Base.establish_connection(config)
+
